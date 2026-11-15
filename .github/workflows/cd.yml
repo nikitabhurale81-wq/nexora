@@ -1,0 +1,40 @@
+# ==========================================================================
+# CD — Deploy to Railway on push to main
+# Triggers: only after CI passes on main branch
+# ==========================================================================
+
+name: CD — Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/cd.yml"
+
+jobs:
+  deploy:
+    name: Deploy to Railway
+    runs-on: ubuntu-latest
+    needs: []          # Add "test" job name here once CI is in same file
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Install Railway CLI
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      # 3. Deploy to Railway
+      - name: Deploy Backend to Railway
+        working-directory: backend
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway up --service nexora-backend --detach
+
+      # 4. Notify success
+      - name: Deployment Success
+        run: echo "Backend deployed to Railway successfully!"
