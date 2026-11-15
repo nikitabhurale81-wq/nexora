@@ -36,13 +36,13 @@ jobs:
         working-directory: backend
         env:
           APP_ENV: test
-          SECRET_KEY: test-secret-key-for-ci-only
+          SECRET_KEY: test-secret-key-for-ci-only-32chars!!
           DATABASE_URL: ""
-          SUPABASE_URL: ""
-          SUPABASE_JWKS_URL: ""
+          SUPABASE_URL: https://test.supabase.co
+          SUPABASE_JWKS_URL: https://test.supabase.co/auth/v1/.well-known/jwks.json
           SUPABASE_JWT_SECRET: ""
           SUPABASE_ANON_KEY: ""
-          SUPABASE_JWT_ISSUER: ""
+          SUPABASE_JWT_ISSUER: https://test.supabase.co/auth/v1
           SUPABASE_JWT_AUDIENCE: authenticated
           AI_PROVIDER: mock
           GEMINI_API_KEY: ""
