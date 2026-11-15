@@ -1,6 +1,5 @@
 # ==========================================================================
 # CI — Run tests on every push and pull request
-# Triggers: push to main/dev, any pull request
 # ==========================================================================
 
 name: CI — Tests
@@ -8,13 +7,8 @@ name: CI — Tests
 on:
   push:
     branches: [main, dev]
-    paths:
-      - "backend/**"
-      - ".github/workflows/ci.yml"
   pull_request:
     branches: [main]
-    paths:
-      - "backend/**"
 
 jobs:
   test:
@@ -22,11 +16,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Python
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -34,32 +26,32 @@ jobs:
           cache: "pip"
           cache-dependency-path: backend/requirements.txt
 
-      # 3. Install dependencies
       - name: Install dependencies
         working-directory: backend
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Run tests
       - name: Run pytest
         working-directory: backend
         env:
-          # Test environment — no real API keys needed
           APP_ENV: test
-          SECRET_KEY: test-secret-key-for-ci
+          SECRET_KEY: test-secret-key-for-ci-only
           DATABASE_URL: ""
           SUPABASE_URL: ""
           SUPABASE_JWKS_URL: ""
           SUPABASE_JWT_SECRET: ""
           SUPABASE_ANON_KEY: ""
+          SUPABASE_JWT_ISSUER: ""
+          SUPABASE_JWT_AUDIENCE: authenticated
           AI_PROVIDER: mock
           GEMINI_API_KEY: ""
           HUGGINGFACE_API_KEY: ""
-        run: |
-          pytest -q --tb=short
+          OPENAI_API_KEY: ""
+          EMBEDDING_PROVIDER: mock
+          EMBEDDING_MODEL: mock
+        run: pytest -q --tb=short
 
-      # 5. Show test summary
       - name: Test Summary
         if: always()
-        run: echo "Tests completed!"
+        run: echo "✅ Tests completed!"
